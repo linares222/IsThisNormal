@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Form, HTTPException, Response
+from fastapi import APIRouter, Form, HTTPException, Response, Depends
 from ..database import supabase
+from ..auth import get_current_user
 
 router = APIRouter()
 
@@ -54,3 +55,20 @@ async def login(response: Response, email: str = Form(...), password: str = Form
 async def logout(response: Response):
     response.delete_cookie(key="access_token")
     return {"message": "Logout successful"}
+
+@router.get("/me")
+async def get_me(current_user: dict = Depends(get_current_user)):
+    try:
+        user_id = current_user.get("sub")
+        email = current_user.get("email")
+        
+        if not user_id:
+            raise HTTPException(status_code=401, detail="User ID not found in token")
+        
+        return {
+            "id": user_id,
+            "email": email,
+        }
+    except Exception as e:
+        print(f"Get current user error: {e}")
+        raise HTTPException(status_code=401, detail="Not authenticated")

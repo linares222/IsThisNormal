@@ -35,8 +35,8 @@ const authStore = useAuthStore()
 const { isLoggedIn } = storeToRefs(authStore)
 import { ref, onMounted } from "vue";
 
-onMounted(() => {
-  authStore.checkAuth()
+onMounted(async () => {
+  await authStore.checkAuth()
 })
 
 const currentLanguage = ref("PT");

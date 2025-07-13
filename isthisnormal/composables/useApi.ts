@@ -121,6 +121,14 @@ export const useApi = () => {
     return result !== null;
   };
 
+  const getCurrentUser = async (): Promise<User | null> => {
+    return apiRequest(async () => {
+      return makeRequest<User>("/me", {
+        method: "GET",
+      });
+    });
+  };
+
   const createConsultation = async (
     questionText: string
   ): Promise<Consultation | null> => {
@@ -177,6 +185,7 @@ export const useApi = () => {
     login,
     signup,
     logout,
+    getCurrentUser,
     createConsultation,
     getConsultations,
     getConsultation,

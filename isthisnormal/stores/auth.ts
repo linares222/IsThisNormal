@@ -31,12 +31,31 @@ export const useAuthStore = defineStore("auth", {
       this.loading = loading;
     },
 
-    checkAuth() {
+    async checkAuth() {
       if (import.meta.client) {
         const hasToken = document.cookie.includes("access_token=");
-        console.log('[AuthStore] Checking auth - Has token?', hasToken, 'Cookies:', document.cookie);  // Debug: Veja se o cookie existe
-        this.isAuthenticated = hasToken;
-        // Opcional: Se quiseres carregar o user via API, adiciona aqui (ex: await getUser())
+        if (hasToken) {
+          this.isAuthenticated = true;
+          if (!this.user) {
+            try {
+              const { getCurrentUser } = useApi();
+              const user = await getCurrentUser();
+              if (user) {
+                this.user = user;
+              } else {
+                this.isAuthenticated = false;
+                this.user = null;
+              }
+            } catch (error) {
+              console.error('[AuthStore] Failed to fetch user data:', error);
+              this.isAuthenticated = false;
+              this.user = null;
+            }
+          }
+        } else {
+          this.isAuthenticated = false;
+          this.user = null;
+        }
       }
     },
 
@@ -49,7 +68,6 @@ export const useAuthStore = defineStore("auth", {
         if (user) {
           this.user = user;
           this.isAuthenticated = true;
-          console.log('[AuthStore] Login successful - State updated:', { user: this.user, isAuthenticated: this.isAuthenticated });  // Debug
         }
       } catch (error) {
         this.error =
