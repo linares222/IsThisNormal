@@ -3,14 +3,11 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
 
-# --- Schema para a criação de uma Consulta ---
 
 
 class ConsultationCreate(BaseModel):
     question_text: str
 
-
-# --- Schemas para a Resposta do endpoint de Consulta ---
 
 
 class ExchangeForConsultationResponse(BaseModel):
@@ -62,3 +59,14 @@ class ExchangeResponse(BaseModel):
 
 class ExchangeCreate(BaseModel):
     question_text: str
+class UserCreate(BaseModel):
+    email: str
+    password: str
+
+class UserResponse(BaseModel):
+    id: uuid.UUID
+    email: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

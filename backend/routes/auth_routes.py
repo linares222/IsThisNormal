@@ -1,11 +1,4 @@
-from fastapi import APIRouter
-
-from ..schemas import UserCreate
-from ..database import get_db
-from ..models import User
-from sqlalchemy.orm import Session
-from fastapi import Depends
-from fastapi import Form, HTTPException, Response
+from fastapi import APIRouter, Form, HTTPException, Response
 from ..database import supabase
 
 router = APIRouter()
@@ -24,7 +17,6 @@ async def signup(email: str = Form(...), password: str = Form(...)):
             "user": {
                 "id": auth_response.user.id,
                 "email": auth_response.user.email,
-                "name": auth_response.user.user_metadata.get("name", "")
             }
         }
     except Exception as e:
@@ -51,7 +43,6 @@ async def login(response: Response, email: str = Form(...), password: str = Form
             "user": {
                 "id": auth_response.user.id,
                 "email": auth_response.user.email,
-                "name": auth_response.user.user_metadata.get("name", "")
             }
         }
         

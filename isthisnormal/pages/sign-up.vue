@@ -1,7 +1,7 @@
 <template>
   <div class="relative min-h-screen flex items-center justify-center">
     <div class="gradient-bg"></div>
-    
+
     <div class="relative z-10 max-w-md w-full mx-4">
       <div class="bg-white shadow-xl rounded-lg p-8">
         <div class="text-center mb-8">
@@ -11,7 +11,10 @@
 
         <form @submit.prevent="handleSignUp" class="space-y-6">
           <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              for="email"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
               Email
             </label>
             <input
@@ -25,7 +28,10 @@
           </div>
 
           <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              for="password"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
               Palavra-passe
             </label>
             <input
@@ -41,12 +47,15 @@
           </div>
 
           <div>
-            <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              for="confirmPassword"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
               Confirmar Palavra-passe
             </label>
             <input
               id="confirmPassword"
-              v-model="form.confirmPassword"
+              v-model="confirmPassword"
               type="password"
               required
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-gray-400 transition-colors"
@@ -57,25 +66,27 @@
           <button
             type="submit"
             :disabled="loading || !isFormValid"
-            class="w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-0 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full cursor-pointer bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-0 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span v-if="loading">A criar conta...</span>
             <span v-else>Criar Conta</span>
           </button>
         </form>
 
-        <div v-if="error" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+        <div
+          v-if="error"
+          class="mt-4 p-3 bg-red-50 border border-red-200 rounded-md"
+        >
           <p class="text-sm text-red-600">{{ error }}</p>
-        </div>
-
-        <div v-if="success" class="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
-          <p class="text-sm text-green-600">{{ success }}</p>
         </div>
 
         <div class="mt-6 text-center">
           <p class="text-sm text-gray-600">
             Já tem conta?
-            <NuxtLink to="/sign-in" class="text-black hover:underline font-medium">
+            <NuxtLink
+              to="/sign-in"
+              class="text-black hover:underline font-medium"
+            >
               Entrar
             </NuxtLink>
           </p>
@@ -86,44 +97,58 @@
 </template>
 
 <script setup>
+const authStore = useAuthStore();
+const { loading, error } = storeToRefs(authStore);
+
 definePageMeta({
-  layout: 'auth'
-})
+  layout: "auth",
+});
 
 const form = ref({
-  email: '',
-  password: '',
-  confirmPassword: ''
-})
+  email: "",
+  password: "",
+});
 
-const loading = ref(false)
-const error = ref('')
-const success = ref('')
+const confirmPassword = ref("");
 
 const isFormValid = computed(() => {
- 
-})
+  return (
+    form.value.email &&
+    form.value.password &&
+    confirmPassword.value &&
+    form.value.password === confirmPassword.value &&
+    form.value.password.length >= 6
+  );
+});
 
-const handleSignUp = async () => {}
+const handleSignUp = async () => {
+  try {
+    // Corrigido: passa email e password separadamente
+    await authStore.signup(form.value.email, form.value.password);
+    navigateTo("/sign-in");
+  } catch (error) {
+    console.error("Signup error:", error);
+  }
+};
 </script>
 
 <style scoped>
 .gradient-bg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(
-      circle at center,
-      rgba(59, 130, 246, 0.4) 0%,
-      rgba(59, 130, 246, 0.2) 50%,
-      transparent 70%
-    );
-    border-radius: 50%;
-    z-index: -10;
-    pointer-events: none;
-    filter: blur(30px);
-  }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle at center,
+    rgba(59, 130, 246, 0.4) 0%,
+    rgba(59, 130, 246, 0.2) 50%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  z-index: -10;
+  pointer-events: none;
+  filter: blur(30px);
+}
 </style>

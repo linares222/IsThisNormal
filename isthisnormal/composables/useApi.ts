@@ -1,9 +1,7 @@
-const baseUrl = import.meta.env.NUXT_PUBLIC_API_BASE_URL;
 
 interface User {
   id: string;
   email: string;
-  name?: string;
 }
 
 interface Consultation {
@@ -25,13 +23,21 @@ const makeRequest = async <T>(
   endpoint: string,
   options: RequestInit
 ): Promise<T> => {
+  const config = useRuntimeConfig();
+  const baseUrl = config.public.apiBaseUrl;
+
   const url = `${baseUrl}${endpoint}`;
+
+  const headers: Record<string, string> = {};
+  if (!(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
 
   const requestOptions: RequestInit = {
     ...options,
     credentials: "include",
     headers: {
-      "Content-Type": "application/json",
+      ...headers,
       ...options.headers,
     },
   };

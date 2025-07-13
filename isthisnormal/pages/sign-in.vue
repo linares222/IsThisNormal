@@ -24,7 +24,7 @@
             />
           </div>
 
-          <div>
+    <div>
             <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
               Palavra-passe
             </label>
@@ -62,10 +62,12 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
 </template>
 
 <script setup>
+const authStore = useAuthStore()
+const { loading, error } = storeToRefs(authStore)
 // Meta data
 definePageMeta({
   layout: 'auth'
@@ -77,12 +79,20 @@ const form = ref({
   password: ''
 })
 
-const loading = ref(false)
-const error = ref('')
+
 
 // Methods
 const handleSignIn = async () => {
-  
+  try {
+    loading.value = true
+    await authStore.login(form.value.email, form.value.password)
+    navigateTo('/')
+  } catch (error) {
+    console.error('Login error:', error)
+    error.value = error.message
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from 'vue'
 import { useVModel } from '@vueuse/core'
-import { cn } from '@/lib/utils'
+import { cn } from '../../../lib/utils'
 
 const props = defineProps<{
   class?: HTMLAttributes['class']
@@ -17,6 +17,9 @@ const modelValue = useVModel(props, 'modelValue', emits, {
   passive: true,
   defaultValue: props.defaultValue,
 })
+
+// Adiciona isto para nome único (evita conflito com index.ts)
+defineOptions({ name: 'UiTextareaComponent' });
 </script>
 
 <template>

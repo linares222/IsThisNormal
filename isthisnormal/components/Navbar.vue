@@ -21,19 +21,36 @@
           </option>
         </select>
       </div>
-      <NuxtLink to="/sign-in" class="btn-sign">Sign in</NuxtLink>
-      <NuxtLink to="/sign-up" class="btn-sign">Sign up</NuxtLink>
+      <NuxtLink v-if="!isLoggedIn" to="/sign-in" class="btn-sign">Sign in</NuxtLink>
+      <NuxtLink v-if="!isLoggedIn" to="/sign-up" class="btn-sign">Sign up</NuxtLink>
+      <NuxtLink v-else to="/" class="btn-logout" @click="handleLogout">Logout</NuxtLink>
     </div>
   </nav>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "../stores/auth";
+const authStore = useAuthStore()
+const { isLoggedIn } = storeToRefs(authStore)
+import { ref, onMounted } from "vue";
 
-const currentLanguage = ref("ENG");
+onMounted(() => {
+  authStore.checkAuth()
+})
+
+const currentLanguage = ref("PT");
+
+const handleLogout = () => {
+  try {
+    authStore.logout()
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 const languages = [
   { code: "ENG", label: "English", flag: "🇺🇸" },
-  { code: "PT", label: "Português", flag: "🇵🇹" },
+  { code: "PT", label: "Português", flag: "🇵��" },
 ];
 </script>

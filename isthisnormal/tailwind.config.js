@@ -12,7 +12,7 @@ module.exports = {
         fontFamily: {
           sans: ['Geist', 'system-ui', 'sans-serif'],
         },
-      },
+    },
     },
     plugins: [],
   }
