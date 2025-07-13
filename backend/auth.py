@@ -18,6 +18,39 @@ async def auth_middleware(request: Request, call_next):
     return response
 
 
+async def get_current_user_from_cookie(request: Request):
+    """Get current user directly from cookie"""
+    try:
+        token = request.cookies.get("access_token")
+        
+        if not token:
+            raise HTTPException(status_code=401, detail="No token provided")
+            
+        if token.startswith("Bearer "):
+            token = token.split(" ")[1]
+        else:
+            raise HTTPException(status_code=401, detail="Invalid token format")
+            
+        payload = jwt.decode(
+            token,
+            os.getenv("SUPABASE_JWT"),
+            algorithms=["HS256"],
+            options={"verify_aud": False},
+        )
+        
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="No user ID in token")
+            
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Authentication failed")
+
+
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):

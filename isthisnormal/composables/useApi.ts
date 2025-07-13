@@ -86,11 +86,13 @@ export const useApi = () => {
       formData.append("email", email);
       formData.append("password", password);
 
-      return makeRequest<User>("/login", {
+      const result = await makeRequest<User>("/login", {
         method: "POST",
         body: formData,
         headers: {},
       });
+      
+      return result;
     });
   };
 
@@ -123,9 +125,15 @@ export const useApi = () => {
 
   const getCurrentUser = async (): Promise<User | null> => {
     return apiRequest(async () => {
-      return makeRequest<User>("/me", {
-        method: "GET",
-      });
+      try {
+        const result = await makeRequest<User>("/me", {
+          method: "GET",
+        });
+        
+        return result;
+      } catch (error) {
+        throw error;
+      }
     });
   };
 

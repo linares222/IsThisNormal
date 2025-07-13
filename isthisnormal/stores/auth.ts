@@ -33,9 +33,16 @@ export const useAuthStore = defineStore("auth", {
 
     async checkAuth() {
       if (import.meta.client) {
-        const hasToken = document.cookie.includes("access_token=");
+        const cookies = document.cookie;
+        const hasToken = cookies.includes("access_token=");
+        
         if (hasToken) {
+          if (this.isAuthenticated && this.user) {
+            return;
+          }
+          
           this.isAuthenticated = true;
+          
           if (!this.user) {
             try {
               const { getCurrentUser } = useApi();
@@ -47,7 +54,6 @@ export const useAuthStore = defineStore("auth", {
                 this.user = null;
               }
             } catch (error) {
-              console.error('[AuthStore] Failed to fetch user data:', error);
               this.isAuthenticated = false;
               this.user = null;
             }

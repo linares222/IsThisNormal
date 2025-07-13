@@ -21,6 +21,7 @@
           </option>
         </select>
       </div>
+      
       <NuxtLink v-if="!isLoggedIn" to="/sign-in" class="btn-sign">Sign in</NuxtLink>
       <NuxtLink v-if="!isLoggedIn" to="/sign-up" class="btn-sign">Sign up</NuxtLink>
       <NuxtLink v-else to="/" class="btn-logout" @click="handleLogout">Logout</NuxtLink>
@@ -33,11 +34,7 @@ import { storeToRefs } from "pinia";
 import { useAuthStore } from "../stores/auth";
 const authStore = useAuthStore()
 const { isLoggedIn } = storeToRefs(authStore)
-import { ref, onMounted } from "vue";
-
-onMounted(async () => {
-  await authStore.checkAuth()
-})
+import { ref } from "vue";
 
 const currentLanguage = ref("PT");
 

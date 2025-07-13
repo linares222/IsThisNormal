@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Form, HTTPException, Response, Depends
+from fastapi import APIRouter, Form, HTTPException, Response, Depends, Request
 from ..database import supabase
-from ..auth import get_current_user
+from ..auth import get_current_user, get_current_user_from_cookie
 
 router = APIRouter()
 
@@ -36,7 +36,7 @@ async def login(response: Response, email: str = Form(...), password: str = Form
             raise HTTPException(status_code=400, detail="Failed to sign in")
         
         access_token = auth_response.session.access_token
-        response.set_cookie(key='access_token', value=f"Bearer {access_token}", httponly=True)
+        response.set_cookie(key='access_token', value=f"Bearer {access_token}", httponly=False, secure=False, samesite='lax')
         
         return {
             "message": "Login successful",
@@ -48,17 +48,17 @@ async def login(response: Response, email: str = Form(...), password: str = Form
         }
         
     except Exception as e:
-        print(f"Login error: {e}")
         raise HTTPException(status_code=400, detail="Invalid email or password")
 
 @router.get("/logout")
 async def logout(response: Response):
-    response.delete_cookie(key="access_token")
+    response.delete_cookie(key="access_token", httponly=False, secure=False, samesite='lax')
     return {"message": "Logout successful"}
 
 @router.get("/me")
-async def get_me(current_user: dict = Depends(get_current_user)):
+async def get_me(request: Request):
     try:
+        current_user = await get_current_user_from_cookie(request)
         user_id = current_user.get("sub")
         email = current_user.get("email")
         
@@ -70,5 +70,4 @@ async def get_me(current_user: dict = Depends(get_current_user)):
             "email": email,
         }
     except Exception as e:
-        print(f"Get current user error: {e}")
         raise HTTPException(status_code=401, detail="Not authenticated")
