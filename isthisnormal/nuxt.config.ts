@@ -6,6 +6,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@nuxt/image", "@nuxt/icon", "@nuxt/fonts"],
   css: ["~/assets/css/main.css"],
+  fonts: {
+    families: [
+      { name: 'Geist', provider: 'bunny' }
+    ]
+  },
   vite: {
     plugins: [tailwindcss()],
   },

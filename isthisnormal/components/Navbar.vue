@@ -1,5 +1,5 @@
 <template>
-  <nav class="flex justify-between items-center px-8 py-4">
+  <nav class="flex justify-between items-center px-8 py-4 bg-white/80 backdrop-blur-sm">
     <p class="text-2xl font-bold">Isto é normal?</p>
     <div class="flex items-center gap-4">
       <div class="relative">
@@ -21,8 +21,8 @@
           </option>
         </select>
       </div>
-      <button class="btn-sign">Sign in</button>
-      <button class="btn-sign">Sign up</button>
+      <NuxtLink to="/sign-in" class="btn-sign">Sign in</NuxtLink>
+      <NuxtLink to="/sign-up" class="btn-sign">Sign up</NuxtLink>
     </div>
   </nav>
 </template>
