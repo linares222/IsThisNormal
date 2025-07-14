@@ -2,6 +2,7 @@
   <nav class="flex justify-between items-center px-8 py-4 bg-white/80 backdrop-blur-sm">
     <RouterLink to="/" class="text-2xl font-bold">Isto é normal?</RouterLink>
     <div class="flex items-center gap-4">
+      <!-- 
       <div class="relative">
         <select
           v-model="currentLanguage"
@@ -21,6 +22,7 @@
           </option>
         </select>
       </div>
+      -->
       
       <NuxtLink v-if="!isLoggedIn" to="/sign-in" class="btn-sign">Sign in</NuxtLink>
       <NuxtLink v-if="!isLoggedIn" to="/sign-up" class="btn-sign">Sign up</NuxtLink>
@@ -46,8 +48,8 @@ const handleLogout = () => {
   }
 }
 
-const languages = [
-  { code: "ENG", label: "English", flag: "🇺🇸" },
-  { code: "PT", label: "Português", flag: "🇵��" },
-];
+// const languages = [
+//   { code: "ENG", label: "English", flag: "🇺🇸" },
+//   { code: "PT", label: "Português", flag: "🇵��" },
+// ];
 </script>
