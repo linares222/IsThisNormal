@@ -41,14 +41,13 @@ export const useAuthStore = defineStore("auth", {
             return;
           }
           
-          this.isAuthenticated = true;
-          
           if (!this.user) {
             try {
               const { getCurrentUser } = useApi();
               const user = await getCurrentUser();
               if (user) {
                 this.user = user;
+                this.isAuthenticated = true;
               } else {
                 this.isAuthenticated = false;
                 this.user = null;
@@ -57,10 +56,14 @@ export const useAuthStore = defineStore("auth", {
               this.isAuthenticated = false;
               this.user = null;
             }
+          } else {
+            this.isAuthenticated = true;
           }
         } else {
-          this.isAuthenticated = false;
-          this.user = null;
+          if (this.isAuthenticated || this.user) {
+            this.isAuthenticated = false;
+            this.user = null;
+          }
         }
       }
     },

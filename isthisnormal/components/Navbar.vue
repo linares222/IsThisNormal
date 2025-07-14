@@ -1,6 +1,6 @@
 <template>
   <nav class="flex justify-between items-center px-8 py-4 bg-white/80 backdrop-blur-sm">
-    <p class="text-2xl font-bold">Isto é normal?</p>
+    <RouterLink to="/" class="text-2xl font-bold">Isto é normal?</RouterLink>
     <div class="flex items-center gap-4">
       <div class="relative">
         <select

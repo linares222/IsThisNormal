@@ -56,6 +56,7 @@ export const useConsultationStore = defineStore("consultation", {
         if (consultation) {
           this.currentConsultation = consultation;
         }
+        return consultation;
       } catch (error) {
         this.setError(
           error instanceof Error ? error.message : "An unknown error occurred"

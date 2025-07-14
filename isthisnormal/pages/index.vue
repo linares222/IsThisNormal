@@ -20,6 +20,7 @@
           <div class="flex justify-end">
             <button
               class="rounded-full bg-black text-white px-6 py-2 hover:bg-gray-800 transition-colors cursor-pointer"
+              @click="handleSubmitQuestion(question)"
             >
               →
             </button>
@@ -36,7 +37,7 @@
                 @click="handleQuestionClick(item.id)"
                 v-for="item in questions"
                 :key="item.id"
-                class="flex items-start gap-3 px-3 py-2  hover:bg-gray-50 cursor-pointer transition-colors rounded-full border border-gray-300"
+                class="flex items-start gap-3 px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors rounded-full border border-gray-300"
               >
                 <p class="text-sm font-medium text-gray-700">
                   {{ item.question }}
@@ -53,7 +54,15 @@
 
 <script setup>
 import { ref } from "vue";
+import { storeToRefs } from "pinia";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuthStore } from "@/stores/auth";
+import { useConsultationStore } from "@/stores/consultation";
+
+const authStore = useAuthStore();
+const consultationStore = useConsultationStore();
+const { loading, error } = storeToRefs(consultationStore);
+const { isLoggedIn } = storeToRefs(authStore);
 
 const questions = [
   {
@@ -80,7 +89,30 @@ const handleQuestionClick = (id) => {
   const selectedQuestion = questions.find((item) => item.id === id);
   if (selectedQuestion) {
     question.value = selectedQuestion.question;
-    console.log(question.value);
+  }
+};
+
+const handleSubmitQuestion = async (questionText) => {
+
+  if (!isLoggedIn.value) {
+
+    await navigateTo("/sign-in");
+    return;
+  }
+
+  if (!questionText || questionText.trim() === "") {
+    return;
+  }
+
+  try {
+    const consultation = await consultationStore.createConsultation(
+      questionText.trim()
+    );
+    if (consultation) {
+      await navigateTo(`/consultation/${consultation.id}`);
+    }
+  } catch (error) {
+    console.error("Erro ao criar consulta:", error);
   }
 };
 </script>
