@@ -21,6 +21,11 @@
         })
       }}</span>
     </div>
+    <div v-if="exchange.check_pediatrician" class="flex justify-end mt-2">
+      <a href="https://www.usawacare.com/" class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 cursor-pointer">
+        Reencaminhe-me para um pediatra
+      </a>
+    </div>
     <hr class="border-gray-200 my-4" />
   </div>
 </template>
@@ -31,6 +36,8 @@ import type { Exchange } from "../types/api";
 const props = defineProps<{
   exchange: Exchange;
 }>();
+
+console.log(props.exchange.check_pediatrician);
 
 const copyToClipboard = (text: string | null) => {
   if (text) {

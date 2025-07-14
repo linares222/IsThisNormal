@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { Consultation } from "~/types/api";
+import type { Consultation, Exchange } from "~/types/api";
 
 export const useConsultationStore = defineStore("consultation", {
   state: () => ({
@@ -36,7 +36,7 @@ export const useConsultationStore = defineStore("consultation", {
         const { getConsultations } = useApi();
         const consultations = await getConsultations();
         if (consultations) {
-          this.consultations = consultations;
+          this.consultations = consultations as unknown as Consultation[];
         }
       } catch (error) {
         this.setError(
@@ -54,7 +54,7 @@ export const useConsultationStore = defineStore("consultation", {
         const { getConsultation } = useApi();
         const consultation = await getConsultation(id);
         if (consultation) {
-          this.currentConsultation = consultation;
+          this.currentConsultation = consultation as Consultation;
         }
         return consultation;
       } catch (error) {
@@ -73,8 +73,8 @@ export const useConsultationStore = defineStore("consultation", {
         const { createConsultation } = useApi();
         const consultation = await createConsultation(questionText);
         if (consultation) {
-          this.consultations.unshift(consultation);
-          this.currentConsultation = consultation; 
+          this.consultations.unshift(consultation as Consultation);
+          this.currentConsultation = consultation as Consultation; 
           return consultation; 
         }
         return null;
@@ -98,7 +98,7 @@ export const useConsultationStore = defineStore("consultation", {
         if (exchange) {
         
           if (this.currentConsultation?.id === consultationId) {
-            this.currentConsultation.exchanges.push(exchange);
+            this.currentConsultation.exchanges.push(exchange as Exchange);
           }
           
         
@@ -106,7 +106,7 @@ export const useConsultationStore = defineStore("consultation", {
             c => c.id === consultationId
           );
           if (consultationIndex !== -1) {
-            this.consultations[consultationIndex].exchanges.push(exchange);
+            this.consultations[consultationIndex].exchanges.push(exchange as Exchange);
           }
           
           return exchange; 

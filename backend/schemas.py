@@ -15,6 +15,7 @@ class ExchangeForConsultationResponse(BaseModel):
     id: uuid.UUID
     question_text: str
     answer_text: Optional[str]
+    check_pediatrician: bool
     created_at: datetime
 
     class Config:
@@ -51,6 +52,7 @@ class ExchangeResponse(BaseModel):
     consultation_id: uuid.UUID
     question_text: str
     answer_text: Optional[str]
+    check_pediatrician: bool
     created_at: datetime
     consultation: ConsultationForExchangeResponse
 

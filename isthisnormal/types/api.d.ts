@@ -15,6 +15,7 @@ export interface Exchange {
   id: string;
   question_text: string;
   answer_text: string | null;
+  check_pediatrician: boolean;  
   created_at: string;
 }
 
