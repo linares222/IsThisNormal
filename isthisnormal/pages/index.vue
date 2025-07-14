@@ -9,9 +9,17 @@
       </h1>
 
       <div class="flex flex-col items-center gap-8 max-w-6xl w-full">
-        <div
-          class="flex flex-col gap-4 shadow-lg bg-white p-6 rounded-lg w-1/2"
-        >
+        
+        <!-- Loading State - substitui o form -->
+        <div v-if="loading" class="flex flex-col gap-4 shadow-lg bg-white p-6 rounded-lg w-1/2 h-[200px] flex items-center justify-center">
+          <LoadingSpinner 
+            text="Criando consulta..." 
+            subtitle="Aguarde enquanto processamos sua pergunta"
+          />
+        </div>
+
+        <!-- Normal State - form da pergunta -->
+        <div v-else class="flex flex-col gap-4 shadow-lg bg-white p-6 rounded-lg w-1/2">
           <Textarea
             placeholder="O meu filho está com..."
             class="h-24 resize-none focus:ring-0 focus:border-gray-300 focus:outline-none border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -19,7 +27,8 @@
           />
           <div class="flex justify-end">
             <button
-              class="rounded-full bg-black text-white px-6 py-2 hover:bg-gray-800 transition-colors cursor-pointer"
+              :disabled="!question.trim()"
+              class="rounded-full bg-black text-white px-6 py-2 hover:bg-gray-800 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               @click="handleSubmitQuestion(question)"
             >
               →
@@ -27,6 +36,7 @@
           </div>
         </div>
 
+        <!-- Exemplos de perguntas - sempre visível -->
         <div class="w-1/2 flex justify-start">
           <div class="flex flex-col gap-3">
             <h3 class="text-sm font-semibold text-gray-600">
@@ -37,7 +47,8 @@
                 @click="handleQuestionClick(item.id)"
                 v-for="item in questions"
                 :key="item.id"
-                class="flex items-start gap-3 px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors rounded-full border border-gray-300"
+                :disabled="loading"
+                class="flex items-start gap-3 px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors rounded-full border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <p class="text-sm font-medium text-gray-700">
                   {{ item.question }}
@@ -61,6 +72,7 @@ import { useConsultationStore } from "@/stores/consultation";
 
 const authStore = useAuthStore();
 const consultationStore = useConsultationStore();
+
 const { loading, error } = storeToRefs(consultationStore);
 const { isLoggedIn } = storeToRefs(authStore);
 
@@ -86,6 +98,8 @@ const questions = [
 const question = ref("");
 
 const handleQuestionClick = (id) => {
+  if (loading.value) return; // Prevenir cliques durante loading
+  
   const selectedQuestion = questions.find((item) => item.id === id);
   if (selectedQuestion) {
     question.value = selectedQuestion.question;
@@ -93,9 +107,7 @@ const handleQuestionClick = (id) => {
 };
 
 const handleSubmitQuestion = async (questionText) => {
-
   if (!isLoggedIn.value) {
-
     await navigateTo("/sign-in");
     return;
   }
@@ -105,10 +117,10 @@ const handleSubmitQuestion = async (questionText) => {
   }
 
   try {
-    const consultation = await consultationStore.createConsultation(
-      questionText.trim()
-    );
+    const consultation = await consultationStore.createConsultation(questionText.trim());
+    
     if (consultation) {
+      question.value = ""; // Limpar campo
       await navigateTo(`/consultation/${consultation.id}`);
     }
   } catch (error) {
