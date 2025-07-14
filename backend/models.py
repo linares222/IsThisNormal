@@ -22,6 +22,7 @@ class Exchange(Base):
     consultation = relationship("Consultation", back_populates="exchanges")
     question_text = Column(String, nullable=False)
     answer_text = Column(String, nullable=False)
+    check_pediatrician = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
